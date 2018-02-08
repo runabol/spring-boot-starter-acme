@@ -38,15 +38,13 @@ import org.springframework.util.Assert;
 @Component
 public class CertGenerator {
 
-
-
-  private static final int KEY_SIZE = 2048;
-
-  private static final Logger logger = LoggerFactory.getLogger(ChallengeController.class);
-
   private final ChallengeStore challengeStore;
   
   private final LetsEncryptConfigProperties config;
+  
+  private static final int KEY_SIZE = 2048;
+
+  private static final Logger logger = LoggerFactory.getLogger(ChallengeController.class);
 
   public CertGenerator (ChallengeStore aChallengeStore, LetsEncryptConfigProperties aConfig) {
     challengeStore = aChallengeStore;
