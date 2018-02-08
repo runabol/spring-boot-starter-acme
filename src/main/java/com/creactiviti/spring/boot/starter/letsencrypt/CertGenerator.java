@@ -20,7 +20,6 @@ import org.shredzone.acme4j.RegistrationBuilder;
 import org.shredzone.acme4j.Session;
 import org.shredzone.acme4j.Status;
 import org.shredzone.acme4j.challenge.Challenge;
-import org.shredzone.acme4j.challenge.Dns01Challenge;
 import org.shredzone.acme4j.challenge.Http01Challenge;
 import org.shredzone.acme4j.exception.AcmeConflictException;
 import org.shredzone.acme4j.exception.AcmeException;
@@ -34,30 +33,17 @@ import org.springframework.stereotype.Component;
 @Component
 public class CertGenerator {
 
-  //File name of the User Key Pair
   private static final File USER_KEY_FILE = new File("ssl/user.key");
-
-  // File name of the Domain Key Pair
   private static final File DOMAIN_KEY_FILE = new File("ssl/domain.key");
-
-  // File name of the CSR
   private static final File DOMAIN_CSR_FILE = new File("ssl/domain.csr");
-
-  // File name of the signed certificate
   private static final File DOMAIN_CHAIN_FILE = new File("ssl/domain-chain.crt");
 
-  //Challenge type to be used
-  private static final ChallengeType CHALLENGE_TYPE = ChallengeType.HTTP;
-
-  // RSA key size of generated key pairs
   private static final int KEY_SIZE = 2048;
-  
-  private static final Logger LOG = LoggerFactory.getLogger(LetsEncryptController.class);
-  
-  private enum ChallengeType { HTTP, DNS }
+
+  private static final Logger logger = LoggerFactory.getLogger(LetsEncryptController.class);
 
   private final ChallengeStore challengeStore;
-  
+
   public CertGenerator (ChallengeStore aChallengeStore) {
     challengeStore = aChallengeStore;
   }
@@ -105,8 +91,8 @@ public class CertGenerator {
     // Now request a signed certificate.
     Certificate certificate = reg.requestCertificate(csrb.getEncoded());
 
-    LOG.info("Success! The certificate for domains " + domains + " has been generated!");
-    LOG.info("Certificate URL: " + certificate.getLocation());
+    logger.info("Success! The certificate for domains " + domains + " has been generated!");
+    logger.info("Certificate URL: " + certificate.getLocation());
 
     // Download the leaf certificate and certificate chain.
     X509Certificate cert = certificate.download();
@@ -184,19 +170,19 @@ public class CertGenerator {
     try {
       // Try to create a new Registration.
       reg = new RegistrationBuilder().create(session);
-      LOG.info("Registered a new user, URL: " + reg.getLocation());
+      logger.info("Registered a new user, URL: " + reg.getLocation());
 
       // This is a new account. Let the user accept the Terms of Service.
       // We won't be able to authorize domains until the ToS is accepted.
       URI agreement = reg.getAgreement();
-      LOG.info("Terms of Service: " + agreement);
+      logger.info("Terms of Service: " + agreement);
       acceptAgreement(reg, agreement);
 
     } catch (AcmeConflictException ex) {
       // The Key Pair is already registered. getLocation() contains the
       // URL of the existing registration's location. Bind it to the session.
       reg = Registration.bind(session, ex.getLocation());
-      LOG.info("Account does already exist, URL: " + reg.getLocation(), ex);
+      logger.info("Account does already exist, URL: " + reg.getLocation(), ex);
     }
 
     return reg;
@@ -209,31 +195,18 @@ public class CertGenerator {
    * You need separate authorizations for subdomains (e.g. "www" subdomain). Wildcard
    * certificates are not currently supported.
    *
-   * @param reg
+   * @param aRegistration
    *            {@link Registration} of your account
-   * @param domain
+   * @param aDomain
    *            Name of the domain to authorize
    */
-  private void authorize(Registration reg, String domain) throws AcmeException {
+  private void authorize (Registration aRegistration, String aDomain) throws AcmeException {
     // Authorize the domain.
-    Authorization auth = reg.authorizeDomain(domain);
-    LOG.info("Authorization for domain " + domain);
+    Authorization auth = aRegistration.authorizeDomain(aDomain);
+    logger.info("Authorization for domain " + aDomain);
 
     // Find the desired challenge and prepare it.
-    Challenge challenge = null;
-    switch (CHALLENGE_TYPE) {
-    case HTTP:
-      challenge = httpChallenge(auth, domain);
-      break;
-
-    case DNS:
-      challenge = dnsChallenge(auth, domain);
-      break;
-    }
-
-    if (challenge == null) {
-      throw new AcmeException("No challenge found");
-    }
+    Challenge challenge = httpChallenge(auth, aDomain);
 
     // If the challenge is already verified, there's no need to execute it again.
     if (challenge.getStatus() == Status.VALID) {
@@ -259,13 +232,13 @@ public class CertGenerator {
         challenge.update();
       }
     } catch (InterruptedException ex) {
-      LOG.error("interrupted", ex);
+      logger.error("interrupted", ex);
       Thread.currentThread().interrupt();
     }
 
     // All reattempts are used up and there is still no valid authorization?
     if (challenge.getStatus() != Status.VALID) {
-      throw new AcmeException("Failed to pass the challenge for domain " + domain + ", ... Giving up.");
+      throw new AcmeException("Failed to pass the challenge for domain " + aDomain + ", ... Giving up.");
     }
   }
 
@@ -293,12 +266,12 @@ public class CertGenerator {
     }
 
     // Output the challenge, wait for acknowledge...
-    LOG.info("Please create a file in your web server's base directory.");
-    LOG.info("It must be reachable at: http://" + domain + "/.well-known/acme-challenge/" + challenge.getToken());
-    LOG.info("File name: " + challenge.getToken());
-    LOG.info("Content: " + challenge.getAuthorization());
-    LOG.info("The file must not contain any leading or trailing whitespaces or line breaks!");
-    LOG.info("If you're ready, dismiss the dialog...");
+    logger.info("Please create a file in your web server's base directory.");
+    logger.info("It must be reachable at: http://" + domain + "/.well-known/acme-challenge/" + challenge.getToken());
+    logger.info("File name: " + challenge.getToken());
+    logger.info("Content: " + challenge.getAuthorization());
+    logger.info("The file must not contain any leading or trailing whitespaces or line breaks!");
+    logger.info("If you're ready, dismiss the dialog...");
 
     StringBuilder message = new StringBuilder();
     message.append("Please create a file in your web server's base directory.\n\n");
@@ -306,79 +279,20 @@ public class CertGenerator {
     message.append("Content:\n\n");
     message.append(challenge.getAuthorization());
     challengeStore.put(challenge.getToken(), challenge.getAuthorization());
-    acceptChallenge(message.toString());
-
-    try {
-      Thread.sleep(3000);
-    } catch (InterruptedException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
 
     return challenge;
-  }
-
-  /**
-   * Prepares a DNS challenge.
-   * <p>
-   * The verification of this challenge expects a TXT record with a certain content.
-   * <p>
-   * This example outputs instructions that need to be executed manually. In a
-   * production environment, you would rather configure your DNS automatically.
-   *
-   * @param auth
-   *            {@link Authorization} to find the challenge in
-   * @param domain
-   *            Domain name to be authorized
-   * @return {@link Challenge} to verify
-   */
-  public Challenge dnsChallenge(Authorization auth, String domain) throws AcmeException {
-    // Find a single dns-01 challenge
-    Dns01Challenge challenge = auth.findChallenge(Dns01Challenge.TYPE);
-    if (challenge == null) {
-      throw new AcmeException("Found no " + Dns01Challenge.TYPE + " challenge, don't know what to do...");
-    }
-
-    // Output the challenge, wait for acknowledge...
-    LOG.info("Please create a TXT record:");
-    LOG.info("_acme-challenge." + domain + ". IN TXT " + challenge.getDigest());
-    LOG.info("If you're ready, dismiss the dialog...");
-
-    StringBuilder message = new StringBuilder();
-    message.append("Please create a TXT record:\n\n");
-    message.append("_acme-challenge." + domain + ". IN TXT " + challenge.getDigest());
-    acceptChallenge(message.toString());
-
-    return challenge;
-  }
-
-  /**
-   * Presents the instructions for preparing the challenge validation, and waits for
-   * dismissal. If the user cancelled the dialog, an exception is thrown.
-   *
-   * @param message
-   *            Instructions to be shown in the dialog
-   */
-  public void acceptChallenge(String message) throws AcmeException {
-    //      int option = JOptionPane.showConfirmDialog(null,
-    //                      message,
-    //                      "Prepare Challenge",
-    //                      JOptionPane.OK_CANCEL_OPTION);
-    //      if (option == JOptionPane.CANCEL_OPTION) {
-    //          throw new AcmeException("User cancelled the challenge");
-    //      }
   }
 
   /**
    * Presents the user a link to the Terms of Service, and asks for confirmation. If the
    * user denies confirmation, an exception is thrown.
    *
-   * @param reg
+   * @param aRegistration
    *            {@link Registration} User's registration
-   * @param agreement
+   * @param aAgreement
    *            {@link URI} of the Terms of Service
    */
-  public void acceptAgreement(Registration reg, URI agreement) throws AcmeException {
+  public void acceptAgreement(Registration aRegistration, URI aAgreement) throws AcmeException {
     //      int option = JOptionPane.showConfirmDialog(null,
     //                      "Do you accept the Terms of Service?\n\n" + agreement,
     //                      "Accept ToS",
@@ -388,8 +302,8 @@ public class CertGenerator {
     //      }
 
     // Motify the Registration and accept the agreement
-    reg.modify().setAgreement(agreement).commit();
-    LOG.info("Updated user's ToS");
+    aRegistration.modify().setAgreement(aAgreement).commit();
+    logger.info("Updated user's ToS");
   }
-  
+
 }

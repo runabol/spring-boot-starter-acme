@@ -1,10 +1,8 @@
 package com.creactiviti.spring.boot.starter.letsencrypt;
 
-import java.security.Security;
 import java.util.Arrays;
 import java.util.Collection;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class LetsEncryptController {
 
-  private static final Logger LOG = LoggerFactory.getLogger(LetsEncryptController.class);
+  private static final Logger logger = LoggerFactory.getLogger(LetsEncryptController.class);
 
   private final CertGenerator certGenerator;
   
@@ -32,15 +30,11 @@ public class LetsEncryptController {
   @GetMapping("/letsencrypt/generate")
   public String generate () {
 
-    LOG.info("Starting up...");
-
-    Security.addProvider(new BouncyCastleProvider());
-
     Collection<String> domains = Arrays.asList("readingtheclassics.org");
     try {
       certGenerator.fetchCertificate(domains);
     } catch (Exception ex) {
-      LOG.error("Failed to get a certificate for domains " + domains, ex);
+      logger.error("Failed to get a certificate for domains " + domains, ex);
     }
 
     return "OK";
