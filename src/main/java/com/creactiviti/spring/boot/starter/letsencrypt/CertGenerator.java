@@ -45,9 +45,9 @@ public class CertGenerator {
 
   private final ChallengeStore challengeStore;
   
-  private final LetsEncryptProperties config;
+  private final LetsEncryptConfigProperties config;
 
-  public CertGenerator (ChallengeStore aChallengeStore, LetsEncryptProperties aConfig) {
+  public CertGenerator (ChallengeStore aChallengeStore, LetsEncryptConfigProperties aConfig) {
     challengeStore = aChallengeStore;
     config = aConfig;
   }
