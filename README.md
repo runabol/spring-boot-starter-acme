@@ -34,9 +34,30 @@ This module depends on having `openssl` on the `PATH` to convert the certificate
 
 # Usage
 
-1. Build your Spring Boot project. 
+1. Add the module to your `pom.xml` file as a dependency.
+
+2. Build your project. 
 
 2. Deploy it to a target machine and point your domain name to the IP address of that machine. LetsEncrypt validates your ownership of the domain by maaking a callback to the `http://your-domain/.well-known/acme-challenge/{token}` exposed by this module.
+
+3. Make sure that your server has `openssl` available on its `$PATH`.
+
+4. By default `spring-boot-starter-acme` is not started unless explicitly turned on. To generate a certificate execute:
+
+```
+sudo java -Dserver.port=80 -Dletsencrypt.enabled=true -Dletsencrypt.domain-name=<YOUR_DOMAIN_NAME> -Dletsencrypt.accept-terms-of-service=true -jar mysecureapp-0.0.1-SNAPSHOT.jar
+```
+
+5. Check your console for a confirmation that the certificate was successfully generated.
+
+6. Stop your application and configure it to make use of the generated certificate:
+
+```
+server.port=443
+server.ssl.key-store=keystore.p12
+server.ssl.key-store-password=password
+server.ssl.keyStoreType=PKCS12
+```
 
 # Configuration
 
