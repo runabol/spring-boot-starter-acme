@@ -1,4 +1,4 @@
-package com.creactiviti.spring.boot.starter.letsencrypt;
+package com.creactiviti.spring.boot.starter.acme;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

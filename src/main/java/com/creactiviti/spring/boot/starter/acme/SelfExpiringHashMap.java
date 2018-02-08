@@ -1,4 +1,4 @@
-package com.creactiviti.spring.boot.starter.letsencrypt;
+package com.creactiviti.spring.boot.starter.acme;
 
 /*
  * Copyright (c) 2017 Pierantonio Cangianiello

@@ -1,1 +1,1 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.creactiviti.spring.boot.starter.letsencrypt.LetsEncryptAutoConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.creactiviti.spring.boot.starter.acme.AcmeAutoConfiguration
