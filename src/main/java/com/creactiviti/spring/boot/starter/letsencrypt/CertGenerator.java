@@ -258,7 +258,7 @@ public class CertGenerator {
   }
 
   private void acceptAgreement(Registration aRegistration, URI aAgreement) throws AcmeException {
-    Assert.isTrue(config.isAcceptTermsOfService(),"You must accept the TOS: " + aAgreement);
+    Assert.isTrue(config.isAcceptTermsOfService(),"You must accept the TOS: " + aAgreement + " by setting the property letsencrypt.accept-terms-of-service to true");
     // Motify the Registration and accept the agreement
     aRegistration.modify().setAgreement(aAgreement).commit();
     logger.info("Updated user's ToS");

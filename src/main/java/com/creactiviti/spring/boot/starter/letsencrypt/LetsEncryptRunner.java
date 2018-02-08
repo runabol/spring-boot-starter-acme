@@ -6,12 +6,14 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
+/**
+ * @author Arik Cohen
+ * @since Feb 07, 2018
+ */
 @Component
-@ConditionalOnProperty(name="letsencrypt.enabled",havingValue="true")
 public class LetsEncryptRunner implements CommandLineRunner {
   
   private final CertGenerator generator;
