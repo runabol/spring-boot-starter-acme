@@ -45,7 +45,7 @@ This module depends on having `openssl` on the `PATH` to convert the certificate
 4. By default `spring-boot-starter-acme` is not started unless explicitly turned on. To generate a certificate execute:
 
 ```
-sudo java -Dserver.port=80 -Dletsencrypt.enabled=true -Dletsencrypt.domain-name=<YOUR_DOMAIN_NAME> -Dletsencrypt.accept-terms-of-service=true -jar mysecureapp-0.0.1-SNAPSHOT.jar
+sudo java -Dserver.port=80 -Dacme.enabled=true -Dacme.domain-name=<YOUR_DOMAIN_NAME> -Dacme.accept-terms-of-service=true -jar mysecureapp-0.0.1-SNAPSHOT.jar
 ```
 
 5. Check your console for a confirmation that the certificate was successfully generated.
