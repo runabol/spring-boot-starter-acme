@@ -1,4 +1,4 @@
-# Spring Boot Starter Let's Encrypt
+# Spring Boot Starter ACME
 
 A Spring Boot module that is meant to ease the pain of generating a valid SSL Certificate using the Automatic Certificate Management Environment (ACME) protocol.
 

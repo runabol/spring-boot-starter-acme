@@ -6,8 +6,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author Arik Cohen
  * @since Feb 07, 2018
  */
-@ConfigurationProperties(prefix="letsencrypt")
-public class LetsEncryptConfigProperties {
+@ConfigurationProperties(prefix="acme")
+public class AcmeEncryptConfigProperties {
 
   private boolean acceptTermsOfService = false;
   private String domainName;

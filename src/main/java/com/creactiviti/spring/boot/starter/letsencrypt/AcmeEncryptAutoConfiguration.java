@@ -11,10 +11,10 @@ import org.springframework.context.annotation.Configuration;
  * @since Feb 07, 2018
  */
 @Configuration
-@ConditionalOnProperty(name="letsencrypt.enabled",havingValue="true")
+@ConditionalOnProperty(name="acme.enabled",havingValue="true")
 @ComponentScan(basePackages="com.creactiviti.spring.boot.starter.letsencrypt")
-@EnableConfigurationProperties(LetsEncryptConfigProperties.class)
-public class LetsEncryptAutoConfiguration  {
+@EnableConfigurationProperties(AcmeEncryptConfigProperties.class)
+public class AcmeEncryptAutoConfiguration  {
   
   @Bean
   InMemoryChallengeStore inMemoryChallengeStore () {

@@ -14,15 +14,15 @@ import org.springframework.util.Assert;
  * @since Feb 07, 2018
  */
 @Component
-public class LetsEncryptRunner implements CommandLineRunner {
+public class AcmeEncryptRunner implements CommandLineRunner {
   
   private final CertGenerator generator;
   
-  private final LetsEncryptConfigProperties config;
+  private final AcmeEncryptConfigProperties config;
    
   private final Logger logger = LoggerFactory.getLogger(getClass());
   
-  public LetsEncryptRunner(CertGenerator aCertGenerator, LetsEncryptConfigProperties aConfig) {
+  public AcmeEncryptRunner(CertGenerator aCertGenerator, AcmeEncryptConfigProperties aConfig) {
     config = aConfig;
     generator = aCertGenerator;
   }

@@ -40,13 +40,13 @@ public class CertGenerator {
 
   private final ChallengeStore challengeStore;
   
-  private final LetsEncryptConfigProperties config;
+  private final AcmeEncryptConfigProperties config;
   
   private static final int KEY_SIZE = 2048;
 
   private static final Logger logger = LoggerFactory.getLogger(ChallengeController.class);
 
-  public CertGenerator (ChallengeStore aChallengeStore, LetsEncryptConfigProperties aConfig) {
+  public CertGenerator (ChallengeStore aChallengeStore, AcmeEncryptConfigProperties aConfig) {
     challengeStore = aChallengeStore;
     config = aConfig;
   }
