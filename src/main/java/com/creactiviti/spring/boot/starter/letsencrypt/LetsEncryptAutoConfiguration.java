@@ -1,8 +1,6 @@
 package com.creactiviti.spring.boot.starter.letsencrypt;
 
 import java.security.Security;
-import java.util.Arrays;
-import java.util.Collection;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
@@ -13,6 +11,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.Assert;
 
 @Configuration
 @ComponentScan(basePackages="com.creactiviti.spring.boot.starter.letsencrypt")
@@ -23,7 +22,7 @@ public class LetsEncryptAutoConfiguration implements CommandLineRunner {
   @Autowired private CertGenerator generator;
   
   @Autowired private LetsEncryptProperties config;
-  
+   
   private final Logger logger = LoggerFactory.getLogger(getClass());
   
   @Override
@@ -31,14 +30,15 @@ public class LetsEncryptAutoConfiguration implements CommandLineRunner {
     
     Security.addProvider(new BouncyCastleProvider());
     
-    Collection<String> domains = Arrays.asList(config.getDomainName());
+    String domainName = config.getDomainName();
+    
+    Assert.notNull(domainName,"missing required property: letsencrypt.domain-name");
     
     try {
-      generator.fetchCertificate(domains);
+      generator.generate(domainName);
     } catch (Exception ex) {
-      logger.error("Failed to get a certificate for {}: {} ", domains, ex.getMessage());
+      logger.error("Failed to get a certificate for {}: {} ", config.getDomainName(), ex.getMessage());
     }
-    
   }
   
 }

@@ -5,17 +5,17 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix="letsencrypt")
 public class LetsEncryptProperties {
 
-  private boolean enabled = false;
-  
   private boolean acceptTermsOfService = false;
   
   private String domainName;
+  
+  private boolean staging = true;
   
   public boolean isAcceptTermsOfService() {
     return acceptTermsOfService;
   }
   
-  public void setAcceptTermsOfService(boolean aAcceptsTos) {
+  public void setAcceptTermsOfService (boolean aAcceptsTos) {
     acceptTermsOfService = aAcceptsTos;
   }
   
@@ -26,13 +26,13 @@ public class LetsEncryptProperties {
   public void setDomainName(String aDomainName) {
     domainName = aDomainName;
   }
-  
-  public boolean isEnabled() {
-    return enabled;
+
+  public boolean isStaging() {
+    return staging;
   }
   
-  public void setEnabled(boolean aEnabled) {
-    enabled = aEnabled;
+  public void setStaging(boolean staging) {
+    this.staging = staging;
   }
   
 }

@@ -11,7 +11,7 @@ import java.io.Writer;
 import java.net.URI;
 import java.security.KeyPair;
 import java.security.cert.X509Certificate;
-import java.util.Collection;
+import java.util.Arrays;
 
 import org.shredzone.acme4j.Authorization;
 import org.shredzone.acme4j.Certificate;
@@ -53,13 +53,13 @@ public class CertGenerator {
   }
 
   /**
-   * Generates a certificate for the given domains. Also takes care for the registration
+   * Generates a certificate for the given domain. Also takes care of the registration
    * process.
    *
-   * @param domains
-   *            Domains to get a common certificate for
+   * @param aDomain
+   *            The name of the daomain to get a common certificate for
    */
-  public void fetchCertificate(Collection<String> domains) throws Exception {
+  public void generate (String aDomain) throws Exception {
     // Load the user key file. If there is no key file, create a new one.
     // Keep this key pair in a safe place! In a production environment, you will not be
     // able to access your account again if you should lose the key pair.
@@ -72,19 +72,16 @@ public class CertGenerator {
 
     // Get the Registration to the account.
     // If there is no account yet, create a new one.
-    Registration reg = findOrRegisterAccount(session);
+    Registration reg = getOrCreateAccount(session);
 
-    // Separately authorize every requested domain.
-    for (String domain : domains) {
-      authorize(reg, domain);
-    }
+    authorize(reg, aDomain);
 
     // Load or create a key pair for the domains. This should not be the userKeyPair!
     KeyPair domainKeyPair = loadOrCreateKeyPair(DOMAIN_KEY_FILE);
 
     // Generate a CSR for all of the domains, and sign it with the domain key pair.
     CSRBuilder csrb = new CSRBuilder();
-    csrb.addDomains(domains);
+    csrb.addDomains(Arrays.asList(aDomain));
     csrb.sign(domainKeyPair);
 
     // Write the CSR to a file, for later use.
@@ -95,7 +92,7 @@ public class CertGenerator {
     // Now request a signed certificate.
     Certificate certificate = reg.requestCertificate(csrb.getEncoded());
 
-    logger.info("Success! The certificate for domains " + domains + " has been generated!");
+    logger.info("Success! The certificate for domain " + aDomain + " has been generated!");
     logger.info("Certificate URL: " + certificate.getLocation());
 
     // Download the leaf certificate and certificate chain.
@@ -119,7 +116,7 @@ public class CertGenerator {
     // DOMAIN_CHAIN_FILE for the requested domans.
   }
 
-  private static String output(InputStream inputStream) throws IOException {
+  private String output(InputStream inputStream) throws IOException {
     StringBuilder sb = new StringBuilder();
     BufferedReader br = null;
     try {
@@ -168,7 +165,8 @@ public class CertGenerator {
    *            {@link Session} to bind with
    * @return {@link Registration} connected to your account
    */
-  private Registration findOrRegisterAccount(Session session) throws AcmeException {
+  private Registration getOrCreateAccount(Session session) throws AcmeException {
+
     Registration reg;
 
     try {
@@ -197,7 +195,7 @@ public class CertGenerator {
    * retrieve a signed certificate for the domain later.
    * <p>
    * You need separate authorizations for subdomains (e.g. "www" subdomain). Wildcard
-   * certificates are not currently supported.
+   * certificates are currently not supported.
    *
    * @param aRegistration
    *            {@link Registration} of your account
@@ -237,13 +235,13 @@ public class CertGenerator {
       }
     } catch (InterruptedException ex) {
       logger.error("interrupted", ex);
-      Thread.currentThread().interrupt();
     }
 
     // All reattempts are used up and there is still no valid authorization?
     if (challenge.getStatus() != Status.VALID) {
       throw new AcmeException("Failed to pass the challenge for domain " + aDomain + ", ... Giving up.");
     }
+    
   }
 
   /**
@@ -251,65 +249,31 @@ public class CertGenerator {
    * <p>
    * The verification of this challenge expects a file with a certain content to be
    * reachable at a given path under the domain to be tested.
-   * <p>
-   * This example outputs instructions that need to be executed manually. In a
-   * production environment, you would rather generate this file automatically, or maybe
-   * use a servlet that returns {@link Http01Challenge#getAuthorization()}.
+   * </p>
    *
-   * @param auth
+   * @param aAuthorization
    *            {@link Authorization} to find the challenge in
-   * @param domain
+   * @param aDomainName
    *            Domain name to be authorized
    * @return {@link Challenge} to verify
    */
-  public Challenge httpChallenge(Authorization auth, String domain) throws AcmeException {
+  private Challenge httpChallenge(Authorization aAuthorization, String aDomainName) throws AcmeException {
     // Find a single http-01 challenge
-    Http01Challenge challenge = auth.findChallenge(Http01Challenge.TYPE);
+    Http01Challenge challenge = aAuthorization.findChallenge(Http01Challenge.TYPE);
+    
     if (challenge == null) {
       throw new AcmeException("Found no " + Http01Challenge.TYPE + " challenge, don't know what to do...");
     }
-
-    // Output the challenge, wait for acknowledge...
-    logger.info("Please create a file in your web server's base directory.");
-    logger.info("It must be reachable at: http://" + domain + "/.well-known/acme-challenge/" + challenge.getToken());
-    logger.info("File name: " + challenge.getToken());
-    logger.info("Content: " + challenge.getAuthorization());
-    logger.info("The file must not contain any leading or trailing whitespaces or line breaks!");
-    logger.info("If you're ready, dismiss the dialog...");
-
-    StringBuilder message = new StringBuilder();
-    message.append("Please create a file in your web server's base directory.\n\n");
-    message.append("http://").append(domain).append("/.well-known/acme-challenge/").append(challenge.getToken()).append("\n\n");
-    message.append("Content:\n\n");
-    message.append(challenge.getAuthorization());
+    
     challengeStore.put(challenge.getToken(), challenge.getAuthorization());
 
     return challenge;
   }
 
-  /**
-   * Presents the user a link to the Terms of Service, and asks for confirmation. If the
-   * user denies confirmation, an exception is thrown.
-   *
-   * @param aRegistration
-   *            {@link Registration} User's registration
-   * @param aAgreement
-   *            {@link URI} of the Terms of Service
-   */
-  public void acceptAgreement(Registration aRegistration, URI aAgreement) throws AcmeException {
-    //      int option = JOptionPane.showConfirmDialog(null,
-    //                      "Do you accept the Terms of Service?\n\n" + agreement,
-    //                      "Accept ToS",
-    //                      JOptionPane.YES_NO_OPTION);
-    //      if (option == JOptionPane.NO_OPTION) {
-    //          throw new AcmeException("User did not accept Terms of Service");
-    //      }
-    
+  private void acceptAgreement(Registration aRegistration, URI aAgreement) throws AcmeException {
     Assert.isTrue(config.isAcceptTermsOfService(),"You must accept the TOS: " + aAgreement);
-
     // Motify the Registration and accept the agreement
     aRegistration.modify().setAgreement(aAgreement).commit();
-    
     logger.info("Updated user's ToS");
   }
 
