@@ -71,11 +71,9 @@ server.ssl.keyStoreType=PKCS12
 | acme.domain-chain-file       | The location of the domain chain file        | string         | domain-chain.crt                |
 | acme.key-store-file          | The location of the keystore file            | string         | keystore.p12                    |
 | acme.key-store-password      | The keystore password                        | string         | password                        |
-| acme.endpoint                | The acme endpoint to generate the cert with  | string         | acme://letsencrypt.org/staging  |
+| acme.endpoint                | The acme endpoint to generate the cert with  | string         | acme://letsencrypt.org          |
 
 # Endpoints
-
-By default `acme.endpoint` points to LetsEncrypt's staging endpoint. To generate a valid SSL certificate you will have to point it to the production endpoint listed below.
 
 | CA          | Env        | URL                             |
 |-------------|------------|---------------------------------|

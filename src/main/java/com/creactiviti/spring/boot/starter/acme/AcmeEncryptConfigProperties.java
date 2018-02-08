@@ -9,7 +9,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix="acme")
 public class AcmeEncryptConfigProperties {
   
-  private static final String LETS_ENCRYPT_STAGING_ENDPOINT = "acme://letsencrypt.org/staging";
+  private static final String LETS_ENCRYPT_PROD_ENDPOINT = "acme://letsencrypt.org";
   
   private boolean acceptTermsOfService = false;
   private String  domainName;
@@ -19,7 +19,7 @@ public class AcmeEncryptConfigProperties {
   private String  domainChainFile = "domain-chain.crt";
   private String  keyStoreFile = "keystore.p12";
   private String  keyStorePassword = "password";
-  private String  endpoint = LETS_ENCRYPT_STAGING_ENDPOINT;
+  private String  endpoint = LETS_ENCRYPT_PROD_ENDPOINT;
     
   public String getUserKeyFile() {
     return userKeyFile;
