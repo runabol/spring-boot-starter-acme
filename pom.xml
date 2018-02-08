@@ -25,15 +25,39 @@
 	</properties>
 
 	<dependencies>
+	
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter</artifactId>
 		</dependency>
 
 		<dependency>
+		  <groupId>org.shredzone.acme4j</groupId>
+		  <artifactId>acme4j-client</artifactId>
+		  <version>0.14</version>
+		</dependency>
+		
+		<dependency>
+		  <groupId>org.shredzone.acme4j</groupId>
+		  <artifactId>acme4j-utils</artifactId>
+		  <version>0.14</version>
+		</dependency>
+
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.3</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 	</dependencies>
 
