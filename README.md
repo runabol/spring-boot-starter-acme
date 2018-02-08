@@ -8,7 +8,7 @@ This project depends on the [acme4j](https://github.com/shred/acme4j) library.
 
 This module depends on having `openssl` on the `PATH` to convert the certificate to PKCS12 format.
 
-# Getting started
+# Maven
 
 ```
 <dependency>
@@ -31,6 +31,13 @@ This module depends on having `openssl` on the `PATH` to convert the certificate
    </repository>
 </repositories>
 ```
+
+# Configuration
+
+| Name                         | Description                         | Default Value  | 
+|------------------------------|-------------------------------------|----------------|
+| acme.accept-terms-of-service |                                     |                |
+
 
 # License
 

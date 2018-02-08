@@ -12,14 +12,14 @@ public class AcmeEncryptConfigProperties {
   private static final String LETS_ENCRYPT_STAGING_ENDPOINT = "acme://letsencrypt.org/staging";
   
   private boolean acceptTermsOfService = false;
-  private String domainName;
-  private String userKeyFile = "user.key";
-  private String domainKeyFile = "domain.key";
-  private String domainCsrFile = "domain.csr";
-  private String domainChainFile = "domain-chain.crt";
-  private String keyStoreFile = "keystore.p12";
-  private String keyStorePassword = "password";
-  private String endpoint = LETS_ENCRYPT_STAGING_ENDPOINT;
+  private String  domainName;
+  private String  userKeyFile = "user.key";
+  private String  domainKeyFile = "domain.key";
+  private String  domainCsrFile = "domain.csr";
+  private String  domainChainFile = "domain-chain.crt";
+  private String  keyStoreFile = "keystore.p12";
+  private String  keyStorePassword = "password";
+  private String  endpoint = LETS_ENCRYPT_STAGING_ENDPOINT;
     
   public String getUserKeyFile() {
     return userKeyFile;
