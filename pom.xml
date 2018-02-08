@@ -4,12 +4,12 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.creactiviti</groupId>
-	<artifactId>spring-boot-starter-letsencrypt</artifactId>
+	<artifactId>spring-boot-starter-acme</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>spring-boot-starter-letsencrypt</name>
-	<description>Letsencrypt SSL Cert Integration.</description>
+	<name>spring-boot-starter-acme</name>
+	<description>acme SSL Cert Integration.</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -27,7 +27,7 @@
 	</licenses>
 
 	<scm>
-		<url>https://github.com/creactiviti/spring-boot-starter-letsencrypt</url>
+		<url>https://github.com/creactiviti/spring-boot-starter-acme</url>
 	</scm>
 
 	<properties>
