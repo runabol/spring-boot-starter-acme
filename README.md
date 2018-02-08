@@ -42,7 +42,7 @@ This module depends on having `openssl` on the `PATH` to convert the certificate
 
 3. Make sure that your server has `openssl` available on its `$PATH`.
 
-4. By default `spring-boot-starter-acme` is not started unless explicitly turned on. To generate a certificate execute:
+4. To activate `spring-boot-starter-acme` and generate a certificate execute:
 
 ```
 sudo java -Dserver.port=80 -Dacme.enabled=true -Dacme.domain-name=<YOUR_DOMAIN_NAME> -Dacme.accept-terms-of-service=true -jar mysecureapp-0.0.1-SNAPSHOT.jar
