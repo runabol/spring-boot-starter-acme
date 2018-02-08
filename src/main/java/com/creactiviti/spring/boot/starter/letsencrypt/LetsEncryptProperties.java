@@ -5,6 +5,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix="letsencrypt")
 public class LetsEncryptProperties {
 
+  private boolean enabled = false;
+  
   private boolean acceptTermsOfService = false;
   
   private String domainName;
@@ -23,6 +25,14 @@ public class LetsEncryptProperties {
   
   public void setDomainName(String aDomainName) {
     domainName = aDomainName;
+  }
+  
+  public boolean isEnabled() {
+    return enabled;
+  }
+  
+  public void setEnabled(boolean aEnabled) {
+    enabled = aEnabled;
   }
   
 }

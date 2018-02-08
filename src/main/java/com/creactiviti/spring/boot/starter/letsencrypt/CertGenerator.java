@@ -29,6 +29,7 @@ import org.shredzone.acme4j.util.KeyPairUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 @Component
 public class CertGenerator {
@@ -40,12 +41,15 @@ public class CertGenerator {
 
   private static final int KEY_SIZE = 2048;
 
-  private static final Logger logger = LoggerFactory.getLogger(LetsEncryptController.class);
+  private static final Logger logger = LoggerFactory.getLogger(ChallengeController.class);
 
   private final ChallengeStore challengeStore;
+  
+  private final LetsEncryptProperties config;
 
-  public CertGenerator (ChallengeStore aChallengeStore) {
+  public CertGenerator (ChallengeStore aChallengeStore, LetsEncryptProperties aConfig) {
     challengeStore = aChallengeStore;
+    config = aConfig;
   }
 
   /**
@@ -300,9 +304,12 @@ public class CertGenerator {
     //      if (option == JOptionPane.NO_OPTION) {
     //          throw new AcmeException("User did not accept Terms of Service");
     //      }
+    
+    Assert.isTrue(config.isAcceptTermsOfService(),"You must accept the TOS: " + aAgreement);
 
     // Motify the Registration and accept the agreement
     aRegistration.modify().setAgreement(aAgreement).commit();
+    
     logger.info("Updated user's ToS");
   }
 
