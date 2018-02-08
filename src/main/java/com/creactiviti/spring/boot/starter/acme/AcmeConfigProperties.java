@@ -7,7 +7,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @since Feb 07, 2018
  */
 @ConfigurationProperties(prefix="acme")
-public class AcmeEncryptConfigProperties {
+public class AcmeConfigProperties {
   
   private static final String LETS_ENCRYPT_PROD_ENDPOINT = "acme://letsencrypt.org";
   

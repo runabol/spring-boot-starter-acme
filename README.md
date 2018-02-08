@@ -63,6 +63,7 @@ server.ssl.keyStoreType=PKCS12
 
 | Name                         | Description                                  | Type           | Default Value                   | 
 |------------------------------|----------------------------------------------|----------------|---------------------------------|
+| acme.enabled                 | Activate the spring-boot-starter-acme module | boolean        | false                           |
 | acme.accept-terms-of-service | Accepts the CA's terms of service            | boolean        | false                           |
 | acme.domain-name             | The domain name to register the SSL cert for | string         |                                 |
 | acme.user-key-file           | The location of the user private key file    | string         | user.key                        |

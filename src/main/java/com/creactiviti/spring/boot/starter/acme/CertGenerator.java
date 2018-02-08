@@ -40,13 +40,13 @@ public class CertGenerator {
 
   private final ChallengeStore challengeStore;
   
-  private final AcmeEncryptConfigProperties config;
+  private final AcmeConfigProperties config;
   
   private static final int KEY_SIZE = 2048;
 
   private static final Logger logger = LoggerFactory.getLogger(ChallengeController.class);
 
-  public CertGenerator (ChallengeStore aChallengeStore, AcmeEncryptConfigProperties aConfig) {
+  public CertGenerator (ChallengeStore aChallengeStore, AcmeConfigProperties aConfig) {
     challengeStore = aChallengeStore;
     config = aConfig;
   }
@@ -65,8 +65,6 @@ public class CertGenerator {
     KeyPair userKeyPair = loadOrCreateKeyPair(new File(config.getUserKeyFile()));
 
     // Create a session for Let's Encrypt.
-    // Use "acme://letsencrypt.org" for production server
-    //Session session = new Session("acme://letsencrypt.org/staging", userKeyPair);
     Session session = new Session(config.getEndpoint(), userKeyPair);
 
     // Get the Registration to the account.
@@ -258,7 +256,7 @@ public class CertGenerator {
   }
 
   private void acceptAgreement(Registration aRegistration, URI aAgreement) throws AcmeException {
-    Assert.isTrue(config.isAcceptTermsOfService(),"You must accept the TOS: " + aAgreement + " by setting the property letsencrypt.accept-terms-of-service to true");
+    Assert.isTrue(config.isAcceptTermsOfService(),"You must accept the TOS: " + aAgreement + " by setting the property acme.accept-terms-of-service to true");
     // Motify the Registration and accept the agreement
     aRegistration.modify().setAgreement(aAgreement).commit();
     logger.info("Updated user's ToS");

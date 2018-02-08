@@ -18,11 +18,11 @@ public class AcmeEncryptRunner implements CommandLineRunner {
   
   private final CertGenerator generator;
   
-  private final AcmeEncryptConfigProperties config;
+  private final AcmeConfigProperties config;
    
   private final Logger logger = LoggerFactory.getLogger(getClass());
   
-  public AcmeEncryptRunner(CertGenerator aCertGenerator, AcmeEncryptConfigProperties aConfig) {
+  public AcmeEncryptRunner(CertGenerator aCertGenerator, AcmeConfigProperties aConfig) {
     config = aConfig;
     generator = aCertGenerator;
   }
@@ -35,7 +35,7 @@ public class AcmeEncryptRunner implements CommandLineRunner {
     
     String domainName = config.getDomainName();
     
-    Assert.notNull(domainName,"missing required property: letsencrypt.domain-name");
+    Assert.notNull(domainName,"missing required property: acme.domain-name");
     
     generator.generate(domainName);
   }
