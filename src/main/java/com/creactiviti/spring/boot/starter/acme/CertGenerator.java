@@ -107,13 +107,12 @@ public class CertGenerator {
 
     Process process = pbuilder.start();
     int errCode = process.waitFor();
-    logger.debug("openssl finished with exit code {} \n{}",errCode, output(process.getInputStream()));
-  }
-
-  private String output(InputStream aInputStream) throws IOException {
-    StringWriter writer = new StringWriter();
-    IOUtils.copy(aInputStream, writer, "ASCII");
-    return writer.toString();
+    
+    try(InputStream in = process.getInputStream(); StringWriter writer = new StringWriter()) {
+      IOUtils.copy(in, writer, "ASCII");
+      logger.debug("openssl finished with exit code {} \n{}",errCode, writer.toString());
+    }
+    
   }
 
   /**
