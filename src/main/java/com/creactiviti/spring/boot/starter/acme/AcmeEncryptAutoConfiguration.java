@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @ConditionalOnProperty(name="acme.enabled",havingValue="true")
-@ComponentScan(basePackages="com.creactiviti.spring.boot.starter.letsencrypt")
+@ComponentScan(basePackages="com.creactiviti.spring.boot.starter.acme")
 @EnableConfigurationProperties(AcmeEncryptConfigProperties.class)
 public class AcmeEncryptAutoConfiguration  {
   
