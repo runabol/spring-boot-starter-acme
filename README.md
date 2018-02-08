@@ -34,9 +34,26 @@ This module depends on having `openssl` on the `PATH` to convert the certificate
 
 # Configuration
 
-| Name                         | Description                         | Default Value  | 
-|------------------------------|-------------------------------------|----------------|
-| acme.accept-terms-of-service |                                     |                |
+| Name                         | Description                                  | Type           | Default Value                   | 
+|------------------------------|----------------------------------------------|----------------|---------------------------------|
+| acme.accept-terms-of-service | Accepts the CA's terms of service            | boolean        | false                           |
+| acme.domain-name             | The domain name to register the SSL cert for | string         |                                 |
+| acme.user-key-file           | The location of the user private key file    | string         | user.key                        |
+| acme.domain-key-file         | The location of the domain private key file  | string         | domain.key                      |
+| acme.domain-csr-file         | The location of the domain csr file          | string         | domain.csr                      |
+| acme.domain-chain-file       | The location of the domain chain file        | string         | domain-chain.crt                |
+| acme.key-store-file          | The location of the keystore file            | string         | keystore.p12                    |
+| acme.key-store-password      | The keystore password                        | string         | password                        |
+| acme.endpoint                | The acme endpoint to generate the cert with  | string         | acme://letsencrypt.org/staging  |
+
+# Endpoints
+
+By default `acme.endpoint` points to LetsEncrypt's staging endpoint. To generate a valid SSL certificate you will have to point it to the production endpoint listed below.
+
+| CA          | Env        | URL                             |
+|-------------|------------|---------------------------------|
+| LetsEncrypt | Staging    | acme://letsencrypt.org/staging  |
+| LetsEncrypt | Prod       | acme://letsencrypt.org          |
 
 
 # License
