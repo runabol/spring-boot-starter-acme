@@ -38,7 +38,7 @@ This module depends on having `openssl` on the `PATH` to convert the certificate
 
 2. Build your project. 
 
-2. Deploy it to a target machine and point your domain name to the IP address of that machine. LetsEncrypt validates your ownership of the domain by maaking a callback to the `http://your-domain/.well-known/acme-challenge/{token}` exposed by this module.
+2. Deploy it to a target machine and point your domain name to the IP address of that machine. LetsEncrypt validates your ownership of the domain by making a callback to the `http://your-domain/.well-known/acme-challenge/{token}` endpoint exposed by this module.
 
 3. Make sure that your server has `openssl` available on its `$PATH`.
 
