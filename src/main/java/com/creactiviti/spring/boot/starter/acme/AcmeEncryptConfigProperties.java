@@ -8,21 +8,19 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @ConfigurationProperties(prefix="acme")
 public class AcmeEncryptConfigProperties {
-
+  
+  private static final String LETS_ENCRYPT_STAGING_ENDPOINT = "acme://letsencrypt.org/staging";
+  
   private boolean acceptTermsOfService = false;
   private String domainName;
-  private boolean staging = true;
   private String userKeyFile = "user.key";
   private String domainKeyFile = "domain.key";
   private String domainCsrFile = "domain.csr";
   private String domainChainFile = "domain-chain.crt";
   private String keyStoreFile = "keystore.p12";
   private String keyStorePassword = "password";
-  
-  private static final String STAGING_ENDPOINT = "acme://letsencrypt.org/staging";
-  
-  private static final String PRODUCTION_ENDPOINT = "acme://letsencrypt.org";
-  
+  private String endpoint = LETS_ENCRYPT_STAGING_ENDPOINT;
+    
   public String getUserKeyFile() {
     return userKeyFile;
   }
@@ -87,16 +85,12 @@ public class AcmeEncryptConfigProperties {
     keyStorePassword = aKeyStorePassword;
   }
   
-  public boolean isStaging() {
-    return staging;
+  public String getEndpoint() {
+    return endpoint;
   }
   
-  public void setStaging(boolean staging) {
-    this.staging = staging;
-  }
-  
-  public String getEndpoint () {
-    return staging ? STAGING_ENDPOINT : PRODUCTION_ENDPOINT;
+  public void setEndpoint(String endpoint) {
+    this.endpoint = endpoint;
   }
   
 }
