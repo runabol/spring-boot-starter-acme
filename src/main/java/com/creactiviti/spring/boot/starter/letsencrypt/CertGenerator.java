@@ -1,18 +1,18 @@
 package com.creactiviti.spring.boot.starter.letsencrypt;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URI;
 import java.security.KeyPair;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 
+import org.apache.commons.io.IOUtils;
 import org.shredzone.acme4j.Authorization;
 import org.shredzone.acme4j.Certificate;
 import org.shredzone.acme4j.Registration;
@@ -31,13 +31,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
+/**
+ * @author Arik Cohen
+ * @since Feb 07, 2018
+ */
 @Component
 public class CertGenerator {
 
-  private static final File USER_KEY_FILE = new File("ssl/user.key");
-  private static final File DOMAIN_KEY_FILE = new File("ssl/domain.key");
-  private static final File DOMAIN_CSR_FILE = new File("ssl/domain.csr");
-  private static final File DOMAIN_CHAIN_FILE = new File("ssl/domain-chain.crt");
+
 
   private static final int KEY_SIZE = 2048;
 
@@ -63,12 +64,12 @@ public class CertGenerator {
     // Load the user key file. If there is no key file, create a new one.
     // Keep this key pair in a safe place! In a production environment, you will not be
     // able to access your account again if you should lose the key pair.
-    KeyPair userKeyPair = loadOrCreateKeyPair(USER_KEY_FILE);
+    KeyPair userKeyPair = loadOrCreateKeyPair(new File(config.getUserKeyFile()));
 
     // Create a session for Let's Encrypt.
     // Use "acme://letsencrypt.org" for production server
     //Session session = new Session("acme://letsencrypt.org/staging", userKeyPair);
-    Session session = new Session("acme://letsencrypt.org", userKeyPair);
+    Session session = new Session(config.getEndpoint(), userKeyPair);
 
     // Get the Registration to the account.
     // If there is no account yet, create a new one.
@@ -77,7 +78,7 @@ public class CertGenerator {
     authorize(reg, aDomain);
 
     // Load or create a key pair for the domains. This should not be the userKeyPair!
-    KeyPair domainKeyPair = loadOrCreateKeyPair(DOMAIN_KEY_FILE);
+    KeyPair domainKeyPair = loadOrCreateKeyPair(new File(config.getDomainKeyFile()));
 
     // Generate a CSR for all of the domains, and sign it with the domain key pair.
     CSRBuilder csrb = new CSRBuilder();
@@ -85,50 +86,38 @@ public class CertGenerator {
     csrb.sign(domainKeyPair);
 
     // Write the CSR to a file, for later use.
-    try (Writer out = new FileWriter(DOMAIN_CSR_FILE)) {
+    try (Writer out = new FileWriter(new File(config.getDomainCsrFile()))) {
       csrb.write(out);
     }
 
     // Now request a signed certificate.
     Certificate certificate = reg.requestCertificate(csrb.getEncoded());
 
-    logger.info("Success! The certificate for domain " + aDomain + " has been generated!");
-    logger.info("Certificate URL: " + certificate.getLocation());
+    logger.info("Success! The certificate for domain {} has been generated!", aDomain);
+    logger.info("Certificate URL: {}", certificate.getLocation());
 
     // Download the leaf certificate and certificate chain.
     X509Certificate cert = certificate.download();
     X509Certificate[] chain = certificate.downloadChain();
 
     // Write a combined file containing the certificate and chain.
-    try (FileWriter fw = new FileWriter(DOMAIN_CHAIN_FILE)) {
+    try (FileWriter fw = new FileWriter(new File (config.getDomainChainFile()))) {
       CertificateUtils.writeX509CertificateChain(fw, cert, chain);
     }
 
-
-    ProcessBuilder pbuilder = new ProcessBuilder("openssl","pkcs12","-export","-out","ssl/server.p12","-inkey","ssl/domain.key","-in","ssl/domain-chain.crt","-password","pass:password");
+    // convert the certificate format to PKS
+    ProcessBuilder pbuilder = new ProcessBuilder("openssl","pkcs12","-export","-out",config.getKeyStoreFile(),"-inkey",config.getDomainKeyFile(),"-in",config.getDomainChainFile(),"-password","pass:" + config.getKeyStorePassword());
     pbuilder.redirectErrorStream(true);
 
     Process process = pbuilder.start();
     int errCode = process.waitFor();
-    System.out.println("Echo Output: " + errCode +"\n" + output(process.getInputStream()));
-
-    // That's all! Configure your web server to use the DOMAIN_KEY_FILE and
-    // DOMAIN_CHAIN_FILE for the requested domans.
+    logger.debug("openssl finished with exit code {} \n{}",errCode, output(process.getInputStream()));
   }
 
-  private String output(InputStream inputStream) throws IOException {
-    StringBuilder sb = new StringBuilder();
-    BufferedReader br = null;
-    try {
-      br = new BufferedReader(new InputStreamReader(inputStream));
-      String line = null;
-      while ((line = br.readLine()) != null) {
-        sb.append(line + System.getProperty("line.separator"));
-      }
-    } finally {
-      br.close();
-    }
-    return sb.toString();
+  private String output(InputStream aInputStream) throws IOException {
+    StringWriter writer = new StringWriter();
+    IOUtils.copy(aInputStream, writer, "ASCII");
+    return writer.toString();
   }
 
   /**
