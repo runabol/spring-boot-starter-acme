@@ -32,6 +32,12 @@ This module depends on having `openssl` on the `PATH` to convert the certificate
 </repositories>
 ```
 
+# Usage
+
+1. Build your Spring Boot project. 
+
+2. Deploy it to a target machine and point your domain name to the IP address of that machine. LetsEncrypt validates your ownership of the domain by maaking a callback to the `http://your-domain/.well-known/acme-challenge/{token}` exposed by this module.
+
 # Configuration
 
 | Name                         | Description                                  | Type           | Default Value                   | 
