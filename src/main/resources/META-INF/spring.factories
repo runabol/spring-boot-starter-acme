@@ -1,1 +1,1 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.creactiviti.spring.boot.starter.acme.AcmeAutoConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.github.csueiras.acme.AcmeAutoConfiguration

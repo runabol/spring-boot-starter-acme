@@ -4,32 +4,28 @@ A Spring Boot module that is meant to ease the pain of generating a valid SSL Ce
 
 This project depends on the [acme4j](https://github.com/shred/acme4j) library.
 
+# Fork
+
+Please note that this is a fork from a seemingly abandoned project at [spring-boot-starter-acme](https://github.com/creactiviti/spring-boot-starter-acme). I plan to keep this library as up to date as possible with respect to its dependencies. All code has been moved into a new group id and package structure to make it easier to release it on its own.
+I've also added some basic tests, and performed some code "clean up" to standardize the codebase.
+
+Wishlist (things I hope to get to some day):
+- Add test coverage to the [CertGenerator](./src/main/java/com/github/csueiras/acme/CertGenerator.java), this is the most important part of this library and its currently not covered in tests.
+
 # Dependencies
 
 This module depends on having `openssl` on the `PATH` to convert the certificate to PKCS12 format.
 
 # Maven
 
+This library will be available in Maven central
+
 ```
 <dependency>
-  <groupId>com.creactiviti</groupId>
+  <groupId>com.github.csueiras</groupId>
   <artifactId>spring-boot-starter-acme</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>{VERSION}</version>
 </dependency>
-
-<repositories>
-   <repository>
-      <id>maven-snapshots</id>
-      <url>http://oss.sonatype.org/content/repositories/snapshots</url>
-      <layout>default</layout>
-      <releases>
-         <enabled>false</enabled>
-      </releases>
-      <snapshots>
-         <enabled>true</enabled>
-      </snapshots>
-   </repository>
-</repositories>
 ```
 
 # Usage
