@@ -105,7 +105,7 @@
 
     <profiles>
         <profile>
-            <id>release-deployment</id>
+            <id>release</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
                 <property>
@@ -158,6 +158,13 @@
                                 <goals>
                                     <goal>sign</goal>
                                 </goals>
+                                <configuration>
+                                    <!-- Prevent `gpg` from using pinentry programs -->
+                                    <gpgArguments>
+                                        <arg>--pinentry-mode</arg>
+                                        <arg>loopback</arg>
+                                    </gpgArguments>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
