@@ -4,7 +4,7 @@ on:
       - master
 jobs:
   pr:
-    name: "Pull Request Checks"
+    name: "Release"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
